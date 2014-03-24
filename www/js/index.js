@@ -47,7 +47,7 @@ var app = {
         console.log('Received Event: ' + id);
     }
 };
-var SITE_URL = "http://s.leadroot.com/mobileapi";
+var SITE_URL = "http://fostergem.com/api";
 window.onload=init;
 function init(){
 		var url = "http://localhost/rest_api/getLeads";
@@ -61,6 +61,12 @@ function init(){
            
         });
 }
+var profile_id = '';
+profile_id = window.localStorage.getItem("profile_id");
+if(profile_id != '') {
+	//user logged in
+	alert(profile_id);
+}
 function login(){
 	var email = $("#email").val();
 	var password =$("#password").val();
@@ -72,8 +78,15 @@ function login(){
 			  data: dataString,
            	  cache: false,
               success: function(responseData) {
+			  alert(responseData);
 				if(responseData != 'error') {
 					//window.location.href =SITE_URL+'/dashboard';
+					var obj = JSON.parse(responseData);
+					window.localStorage.setItem("profile_id", obj.profile_id);
+					window.localStorage.setItem("fname", obj.fname);
+					window.localStorage.setItem("lname", obj.lname);
+					window.localStorage.setItem("gender", obj.gender);
+					window.localStorage.setItem("profile_pic", obj.profile_pic);
 					$("#main_content").replaceWith('<div class="alert alert-success" id="main_content"><center>'+responseData+'</center></div>');
 				} else {
 					$("#error_message").replaceWith('<div class="alert alert-danger" id="error_message"><center>Wrong User Name or Password</center></div>');
