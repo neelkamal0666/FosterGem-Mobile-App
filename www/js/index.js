@@ -114,6 +114,9 @@ function login(){
 					window.localStorage.setItem("gender", obj.gender);
 					window.localStorage.setItem("profile_pic", obj.profile_pic);
 					$("#logout_nav_bar").append('<li><a class="logout" id="logout">Log Out</a></li>');
+					jQuery(document).ready(function() {
+					$("#logout").click(logout);
+					});
 					getNewsfeed(obj.profile_id,password);
 				} else {
 					$("#error_message").replaceWith('<div class="alert alert-danger" id="error_message"><center>Wrong User Name or Password</center></div>');
