@@ -61,11 +61,24 @@ function init(){
            
         });
 }
-var profile_id = '';
-profile_id = window.localStorage.getItem("profile_id");
-if(profile_id != '') {
+var profile_id = window.localStorage.getItem("profile_id");
+var password = window.localStorage.getItem("password");
+if(profile_id) {
 	//user logged in
-	alert(profile_id);
+	getNewsfeed(profile_id,password);
+} else {
+//alert(profile_id);
+}
+function getNewsfeed(profile_id,password){
+	var server =SITE_URL+'/getNewsfeed/'+profile_id+'/'+password;
+		 $.ajax({
+	          url: server,
+        	  method: 'GET',
+           	  cache: true,
+              success: function(responseData) {
+			  $("#main_content").replaceWith('<div id="main_content">'+responseData+'</div>');
+			  }
+       		 });
 }
 function login(){
 	var email = $("#email").val();
@@ -76,18 +89,20 @@ function login(){
 	          url: server,
         	  method: 'POST',
 			  data: dataString,
-           	  cache: false,
+           	  cache: true,
               success: function(responseData) {
-			  alert(responseData);
 				if(responseData != 'error') {
 					//window.location.href =SITE_URL+'/dashboard';
 					var obj = JSON.parse(responseData);
+					window.localStorage.setItem("email", email);
+					window.localStorage.setItem("password", password);
 					window.localStorage.setItem("profile_id", obj.profile_id);
 					window.localStorage.setItem("fname", obj.fname);
 					window.localStorage.setItem("lname", obj.lname);
 					window.localStorage.setItem("gender", obj.gender);
 					window.localStorage.setItem("profile_pic", obj.profile_pic);
-					$("#main_content").replaceWith('<div class="alert alert-success" id="main_content"><center>'+responseData+'</center></div>');
+					//$("#main_content").replaceWith('<div class="alert alert-success" id="main_content"><center>'+responseData+'</center></div>');
+					getNewsfeed(obj.profile_id,password);
 				} else {
 					$("#error_message").replaceWith('<div class="alert alert-danger" id="error_message"><center>Wrong User Name or Password</center></div>');
 				}
