@@ -65,6 +65,8 @@ var profile_id = window.localStorage.getItem("profile_id");
 var password = window.localStorage.getItem("password");
 if(profile_id) {
 	//user logged in
+	$("#logout_nav_bar").append('<li><a class="logout" id="logout">Log Out</a></li>');
+	 $("#main_content").replaceWith('<div id="main_content"><center><img src="img/ajax-loader.gif" /></center></div>');
 	getNewsfeed(profile_id,password);
 } else {
 //alert(profile_id);
@@ -76,7 +78,16 @@ function getNewsfeed(profile_id,password){
         	  method: 'GET',
            	  cache: true,
               success: function(responseData) {
-			  $("#main_content").replaceWith('<div id="main_content">'+responseData+'</div>');
+			    var category=responseData.split("|||");
+				$("#main_content").replaceWith('<div id="main_content"></div>');
+				for(i=0;i<category.length-1;i++){
+					if(category[i] =='') {
+						break;
+					}
+					 $("#main_content").append(category[i]);
+					 //feed_count = feed_count+1;
+				}
+			  $("#include_js").replaceWith('<div id="include_js"><script type="text/javascript" src="http://fostergem.com/scripts/js/fostergem.js"></script></div>');
 			  }
        		 });
 }
@@ -84,6 +95,7 @@ function login(){
 	var email = $("#email").val();
 	var password =$("#password").val();
 	var dataString = '{"email":"'+email+'","password":"'+password+'"}';
+	$("#error_message").replaceWith('<div id="error_message"><center><img src="img/ajax-loader.gif" /></center></div>');
 	var server =SITE_URL+'/getUser';
 		 $.ajax({
 	          url: server,
@@ -101,7 +113,7 @@ function login(){
 					window.localStorage.setItem("lname", obj.lname);
 					window.localStorage.setItem("gender", obj.gender);
 					window.localStorage.setItem("profile_pic", obj.profile_pic);
-					//$("#main_content").replaceWith('<div class="alert alert-success" id="main_content"><center>'+responseData+'</center></div>');
+					$("#logout_nav_bar").append('<li><a class="logout" id="logout">Log Out</a></li>');
 					getNewsfeed(obj.profile_id,password);
 				} else {
 					$("#error_message").replaceWith('<div class="alert alert-danger" id="error_message"><center>Wrong User Name or Password</center></div>');
@@ -110,3 +122,12 @@ function login(){
        		 });
 		   return false; // <--- important, prevents the link's href (hash in this example) from executing.
 }
+function logout(){
+window.localStorage.clear();
+$("#logout").replaceWith('');
+window.location.href ='index.html';
+}
+jQuery(document).ready(function() {
+        $("#logout").click(logout);
+		
+	 });
